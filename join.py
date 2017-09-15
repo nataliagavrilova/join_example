@@ -21,10 +21,16 @@ def read_file(path_to_table):
             else:
                 try:
                     (key, val) = line.strip('\n').split(sep=',')
-                    d[int(key)] = val
+                    if int(key) in d:
+                        d[int(key)].append(val)
+                    else:
+                        d[int(key)] = [val]
                 except:
                     (val, key) = line.strip('\n').split(sep=',')
-                    d[int(key)] = val
+                    if int(key) in d:
+                        d[int(key)].append(val)
+                    else:
+                        d[int(key)] = [val]
             i += 1
     print('{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now()) + \
           ' Read ' + str(i) + ' lines from files ' + path_to_table + '.')
@@ -54,9 +60,10 @@ def join_and_write_res(table1, table2, path_to_res_table):
     res_table = []
     print('{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now()) + \
           ' end joining.')
-
     with open(path_to_res_table, 'w') as f:
         f.write('t1_name,t2_name,id\n')
         for i in intersection:
-            f.write(str(table1[i]) + ',' + \
-                    str(table2[i]) + ',' + str(i) + '\n')
+            for elem1 in table1[i]:
+                for elem2 in table2[i]:
+                    f.write(str(elem1) + ',' + \
+                            str(elem2) + ',' + str(i) + '\n')
